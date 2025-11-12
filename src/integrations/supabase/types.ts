@@ -14,16 +14,315 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      about_content: {
+        Row: {
+          content: string | null
+          id: string
+          image_url: string | null
+          section: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          section: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          id?: string
+          image_url?: string | null
+          section?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      client_photos: {
+        Row: {
+          client_name: string | null
+          created_at: string | null
+          description: string | null
+          featured: boolean | null
+          id: string
+          image_url: string
+          location: string | null
+          title: string | null
+          trip_id: string | null
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url: string
+          location?: string | null
+          title?: string | null
+          trip_id?: string | null
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string
+          location?: string | null
+          title?: string | null
+          trip_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_photos_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_submissions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      destinations: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      home_content: {
+        Row: {
+          content: Json | null
+          id: string
+          image_url: string | null
+          section: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          id?: string
+          image_url?: string | null
+          section: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          id?: string
+          image_url?: string | null
+          section?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          client_image: string | null
+          client_name: string
+          created_at: string | null
+          featured: boolean | null
+          id: string
+          rating: number | null
+          review: string
+          trip_id: string | null
+        }
+        Insert: {
+          client_image?: string | null
+          client_name: string
+          created_at?: string | null
+          featured?: boolean | null
+          id?: string
+          rating?: number | null
+          review: string
+          trip_id?: string | null
+        }
+        Update: {
+          client_image?: string | null
+          client_name?: string
+          created_at?: string | null
+          featured?: boolean | null
+          id?: string
+          rating?: number | null
+          review?: string
+          trip_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          available_dates: string[] | null
+          created_at: string | null
+          description: string | null
+          destination_id: string | null
+          difficulty_level: string | null
+          duration: string | null
+          exclusions: string[] | null
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          inclusions: string[] | null
+          itinerary: Json | null
+          max_group_size: number | null
+          price: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          available_dates?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          destination_id?: string | null
+          difficulty_level?: string | null
+          duration?: string | null
+          exclusions?: string[] | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          inclusions?: string[] | null
+          itinerary?: Json | null
+          max_group_size?: number | null
+          price?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          available_dates?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          destination_id?: string | null
+          difficulty_level?: string | null
+          duration?: string | null
+          exclusions?: string[] | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          inclusions?: string[] | null
+          itinerary?: Json | null
+          max_group_size?: number | null
+          price?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trips_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "destinations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +449,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
