@@ -4,6 +4,7 @@ import FeaturedDestinations from "@/components/FeaturedDestinations";
 import PopularTrips from "@/components/PopularTrips";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
+import FloatingActions from "@/components/FloatingActions";
 
 const Index = () => {
   return (
@@ -14,6 +15,7 @@ const Index = () => {
       <PopularTrips />
       <Testimonials />
       <Footer />
+      <FloatingActions />
     </div>
   );
 };

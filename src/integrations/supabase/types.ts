@@ -41,6 +41,57 @@ export type Database = {
         }
         Relationships: []
       }
+      blogs: {
+        Row: {
+          author: string
+          category: string | null
+          content: string
+          created_at: string | null
+          excerpt: string | null
+          featured: boolean | null
+          featured_image: string | null
+          id: string
+          published: boolean | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          author: string
+          category?: string | null
+          content: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured?: boolean | null
+          featured_image?: string | null
+          id?: string
+          published?: boolean | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          author?: string
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured?: boolean | null
+          featured_image?: string | null
+          id?: string
+          published?: boolean | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
       client_photos: {
         Row: {
           client_name: string | null
@@ -181,6 +232,50 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          comment: string
+          created_at: string | null
+          helpful_count: number | null
+          id: string
+          rating: number
+          title: string
+          trip_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          comment: string
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          rating: number
+          title: string
+          trip_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string
+          created_at?: string | null
+          helpful_count?: number | null
+          id?: string
+          rating?: number
+          title?: string
+          trip_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       testimonials: {
         Row: {
           client_image: string | null
@@ -215,6 +310,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "testimonials_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_videos: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          id: string
+          thumbnail_url: string | null
+          title: string | null
+          trip_id: string | null
+          video_type: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          id?: string
+          thumbnail_url?: string | null
+          title?: string | null
+          trip_id?: string | null
+          video_type?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          id?: string
+          thumbnail_url?: string | null
+          title?: string | null
+          trip_id?: string | null
+          video_type?: string | null
+          video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_videos_trip_id_fkey"
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trips"
@@ -307,6 +446,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      wishlist: {
+        Row: {
+          created_at: string | null
+          id: string
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

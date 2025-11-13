@@ -13,6 +13,8 @@ import AboutContentManager from "@/components/admin/AboutContentManager";
 import ContactSubmissionsManager from "@/components/admin/ContactSubmissionsManager";
 import ClientPhotosManager from "@/components/admin/ClientPhotosManager";
 import TestimonialsManager from "@/components/admin/TestimonialsManager";
+import BlogsManager from "@/components/admin/BlogsManager";
+import ReviewsManager from "@/components/admin/ReviewsManager";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -125,11 +127,13 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="destinations" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 gap-1">
             <TabsTrigger value="destinations">Destinations</TabsTrigger>
             <TabsTrigger value="trips">Trips</TabsTrigger>
             <TabsTrigger value="home">Home</TabsTrigger>
             <TabsTrigger value="about">About</TabsTrigger>
+            <TabsTrigger value="blogs">Blogs</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="contact">Contact</TabsTrigger>
             <TabsTrigger value="photos">Client Photos</TabsTrigger>
             <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
@@ -161,6 +165,14 @@ const Admin = () => {
 
           <TabsContent value="testimonials">
             <TestimonialsManager />
+          </TabsContent>
+
+          <TabsContent value="blogs">
+            <BlogsManager />
+          </TabsContent>
+
+          <TabsContent value="reviews">
+            <ReviewsManager />
           </TabsContent>
         </Tabs>
       </main>
