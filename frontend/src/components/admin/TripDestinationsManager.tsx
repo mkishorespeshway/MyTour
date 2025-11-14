@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -91,11 +91,14 @@ const TripDestinationsManager = () => {
       order_number: parseInt(formData.order_number),
     };
 
+    const token = localStorage.getItem('token') || ''
+
     if (editingId) {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/trip_destinations/${editingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(data)
       });
@@ -112,6 +115,7 @@ const TripDestinationsManager = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(data)
       });
@@ -140,8 +144,12 @@ const TripDestinationsManager = () => {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this trip destination?")) return;
 
+    const token = localStorage.getItem('token') || ''
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/trip_destinations/${id}`, {
       method: 'DELETE',
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      }
     });
 
     if (!response.ok) {
@@ -173,10 +181,12 @@ const TripDestinationsManager = () => {
   };
 
   const updateOrder = async (id: string, order_number: number) => {
+    const token = localStorage.getItem('token') || ''
     await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/trip_destinations/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({ order_number })
     });
@@ -210,6 +220,9 @@ const TripDestinationsManager = () => {
                 <DialogTitle>
                   {editingId ? "Edit Trip Destination" : "Add New Trip Destination"}
                 </DialogTitle>
+                <DialogDescription>
+                  Select a trip and a destination, then set order and package amount.
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">

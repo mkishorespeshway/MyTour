@@ -73,7 +73,7 @@ const TripDetails = () => {
 
   const fetchUserData = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('auth_token');
       if (token) {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/auth/me`, {
           headers: {
@@ -130,11 +130,17 @@ const TripDetails = () => {
 
   const sendAdminNotification = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        toast.error('Please login to book');
+        window.location.href = '/auth';
+        return;
+      }
       await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/notifications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           type: 'booking_inquiry',
@@ -154,6 +160,43 @@ const TripDetails = () => {
       console.error('Error sending admin notification:', error);
     }
   };
+
+  const [ratings, setRatings] = useState<number[]>([])
+  const [userRating, setUserRating] = useState<number | null>(null)
+
+  const fetchRatings = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/ratings?filter=${encodeURIComponent(JSON.stringify({ trip_id: id }))}`)
+      const list = await res.json()
+      setRatings(Array.isArray(list) ? list.map((r: any) => Number(r.value) || 0) : [])
+    } catch {}
+  }
+
+  useEffect(() => { fetchRatings() }, [id])
+
+  const submitRating = async (value: number) => {
+    const token = localStorage.getItem('auth_token')
+    if (!token) {
+      toast.error('Please login to rate');
+      window.location.href = '/auth'
+      return
+    }
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'}/api/ratings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ trip_id: id, value })
+      })
+      setUserRating(value)
+      toast.success('Thanks for rating!')
+      fetchRatings()
+    } catch {
+      toast.error('Failed to submit rating')
+    }
+  }
 
   if (loading) {
     return (
@@ -300,6 +343,30 @@ const TripDetails = () => {
               <span>Total Package Amount:</span>
               <span>${calculateTotalPackage()}</span>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Ratings */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Rate This Trip</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            {[1,2,3,4,5].map((n) => (
+              <button
+                key={n}
+                onClick={() => submitRating(n)}
+                className={`h-8 w-8 rounded-full flex items-center justify-center ${((userRating || 0) >= n) ? 'bg-primary text-white' : 'bg-muted'}`}
+                aria-label={`Rate ${n} star${n>1?'s':''}`}
+              >
+                ★
+              </button>
+            ))}
+            <span className="ml-4 text-sm text-muted-foreground">
+              Average: {ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—'}
+            </span>
           </div>
         </CardContent>
       </Card>

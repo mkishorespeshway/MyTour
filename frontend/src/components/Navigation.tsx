@@ -52,7 +52,6 @@ const Navigation = () => {
   const getNavLinks = () => {
     const baseLinks = [
       { name: "Home", path: "/" },
-      { name: "Destinations", path: "/destinations" },
       { name: "Trips", path: "/trips" },
       { name: "Blog", path: "/blogs" },
       { name: "Gallery", path: "/gallery" },

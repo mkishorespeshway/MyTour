@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-adventure.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import { apiBaseUrl } from "@/integrations/api/client";
 
 const Hero = () => {
   const [dest, setDest] = useState("")
@@ -12,6 +13,7 @@ const Hero = () => {
   const [subtitle, setSubtitle] = useState("Explore breathtaking destinations, plan unforgettable trips, and create memories that last a lifetime")
   const [bg, setBg] = useState<string | null>(null)
   const navigate = useNavigate()
+  const [stats, setStats] = useState<{ trips?: number; travelers?: number | string; rating?: string }>({})
   useEffect(() => {
     (async () => {
       try {
@@ -30,6 +32,39 @@ const Hero = () => {
       } catch {
         // keep defaults
       }
+    })()
+  }, [])
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const health = await fetch(`${apiBaseUrl}/health`).then(r => r.ok).catch(() => false)
+        if (!health) { setStats({ trips: undefined, travelers: '—', rating: undefined }); return }
+
+        const tripsRes = await supabase.from("trips").select("id")
+        const tripsCount = Array.isArray(tripsRes.data) ? tripsRes.data.length : 0
+
+        let travelers: number | string = "—"
+        const token = localStorage.getItem("auth_token")
+        if (token) {
+          const res = await fetch(`${apiBaseUrl}/api/notifications?filter=${encodeURIComponent(JSON.stringify({ type: 'booking_inquiry' }))}`)
+          if (res.ok) {
+            const list = await res.json()
+            travelers = Array.isArray(list) ? list.length : "—"
+          }
+        }
+
+        let avg = "4.9"
+        const ratingsRes = await fetch(`${apiBaseUrl}/api/ratings`)
+        if (ratingsRes.ok) {
+          const ratings = await ratingsRes.json()
+          avg = Array.isArray(ratings) && ratings.length
+            ? (ratings.reduce((sum: number, r: any) => sum + (Number(r.value) || 0), 0) / ratings.length).toFixed(1)
+            : "4.9"
+        }
+
+        setStats({ trips: tripsCount, travelers, rating: String(avg) })
+      } catch {}
     })()
   }, [])
   return (
@@ -79,7 +114,7 @@ const Hero = () => {
                 onChange={(e) => setWhen(e.target.value)}
               />
             </div>
-            <Button size="lg" className="px-8 shadow-glow" onClick={() => navigate(`/destinations?q=${encodeURIComponent(dest)}`)}>
+            <Button size="lg" className="px-8 shadow-glow" onClick={() => navigate(`/trips?q=${encodeURIComponent(dest)}`)}>
               <Search className="h-5 w-5 mr-2" />
               Search
             </Button>
@@ -89,15 +124,15 @@ const Hero = () => {
         {/* Quick Stats */}
         <div className="mt-16 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
           <div className="animate-float">
-            <div className="text-4xl font-bold text-secondary">500+</div>
-            <div className="text-white/80">Destinations</div>
+            <div className="text-4xl font-bold text-secondary">{typeof stats.trips === 'number' ? `${stats.trips}+` : '—'}</div>
+            <div className="text-white/80">Trips</div>
           </div>
           <div className="animate-float" style={{ animationDelay: "0.2s" }}>
-            <div className="text-4xl font-bold text-secondary">50K+</div>
+            <div className="text-4xl font-bold text-secondary">{typeof stats.travelers === 'number' ? `${stats.travelers}+` : stats.travelers}</div>
             <div className="text-white/80">Happy Travelers</div>
           </div>
           <div className="animate-float" style={{ animationDelay: "0.4s" }}>
-            <div className="text-4xl font-bold text-secondary">4.9</div>
+            <div className="text-4xl font-bold text-secondary">{stats.rating || '4.9'}</div>
             <div className="text-white/80">Rating</div>
           </div>
         </div>

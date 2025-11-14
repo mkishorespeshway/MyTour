@@ -39,7 +39,7 @@ app.use(cors({
 }))
 
 app.options('*', cors())
-app.use(express.json({ limit: '1mb' }))
+app.use(express.json({ limit: '10mb' }))
 app.use(morgan('dev'))
 
 // Serve uploaded files
@@ -102,25 +102,27 @@ app.post('/api/notifications', authMiddleware, async (req, res) => {
 })
 
 // Simple storage upload endpoint (base64 JSON)
-app.post('/storage/upload', async (req, res) => {
-  try {
-    const { bucket, filePath, base64 } = req.body || {}
-    if (!bucket || !filePath || !base64) {
-      return res.status(400).json({ error: 'invalid_payload' })
+  app.post('/storage/upload', async (req, res) => {
+    try {
+      const { bucket, filePath, base64 } = req.body || {}
+      if (!bucket || !filePath || !base64) {
+        return res.status(400).json({ error: 'invalid_payload' })
+      }
+      const safeBucket = String(bucket).replace(/[^a-zA-Z0-9-_]/g, '')
+      const destDir = path.join(UPLOADS_DIR, safeBucket)
+      if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true })
+      const safeRel = String(filePath).replace(/[^a-zA-Z0-9/_\-.]/g, '')
+      const outPath = path.join(destDir, safeRel)
+      const outDir = path.dirname(outPath)
+      if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true })
+      const buf = Buffer.from(base64, 'base64')
+      fs.writeFileSync(outPath, buf)
+      const publicPath = `/uploads/${safeBucket}/${safeRel}`
+      res.status(201).json({ ok: true, path: `${safeBucket}/${safeRel}`, url: publicPath })
+    } catch (err) {
+      res.status(500).json({ error: 'upload_failed', message: err.message })
     }
-    const safeBucket = String(bucket).replace(/[^a-zA-Z0-9-_]/g, '')
-    const destDir = path.join(UPLOADS_DIR, safeBucket)
-    if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true })
-    const safeRel = String(filePath).replace(/[^a-zA-Z0-9/_\-.]/g, '')
-    const outPath = path.join(destDir, safeRel)
-    const buf = Buffer.from(base64, 'base64')
-    fs.writeFileSync(outPath, buf)
-    const publicPath = `/uploads/${safeBucket}/${safeRel}`
-    res.status(201).json({ ok: true, path: `${safeBucket}/${safeRel}`, url: publicPath })
-  } catch (err) {
-    res.status(500).json({ error: 'upload_failed', message: err.message })
-  }
-})
+  })
 
 // List documents with optional filtering/sorting/pagination
 app.get('/api/:collection', async (req, res) => {
